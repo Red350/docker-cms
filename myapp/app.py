@@ -6,29 +6,30 @@ from tempfile import mkdtemp
 from werkzeug import secure_filename
 
 app = Flask(__name__)
+app.debug = True
 
 @app.route("/")
 def index():
     return """
-Available API endpoints:
-
-GET /containers                     List all containers
-GET /containers?state=running      List running containers (only)
-GET /containers/<id>                Inspect a specific container
-GET /containers/<id>/logs           Dump specific container logs
-GET /images                         List all images
-
-
-POST /images                        Create a new image
-POST /containers                    Create a new container
-
-PATCH /containers/<id>              Change a container's state
-PATCH /images/<id>                  Change a specific image's attributes
-
-DELETE /containers/<id>             Delete a specific container
-DELETE /containers                  Delete all containers (including running)
-DELETE /images/<id>                 Delete a specific image
-DELETE /images                      Delete all images
+Available API endpoints:<br/>
+<br/>
+GET /containers                     List all containers<br/>
+GET /containers?state=running      List running containers (only)<br/>
+GET /containers/<id>                Inspect a specific container<br/>
+GET /containers/<id>/logs           Dump specific container logs<br/>
+GET /images                         List all images<br/>
+<br/>
+<br/>
+POST /images                        Create a new image<br/>
+POST /containers                    Create a new container<br/>
+<br/>
+PATCH /containers/<id>              Change a container's state<br/>
+PATCH /images/<id>                  Change a specific image's attributes<br/>
+<br/>
+DELETE /containers/<id>             Delete a specific container<br/>
+DELETE /containers                  Delete all containers (including running)<br/>
+DELETE /images/<id>                 Delete a specific image<br/>
+DELETE /images                      Delete all images<br/>
 
 """
 
@@ -49,7 +50,6 @@ def containers_index():
         output = docker('ps', '-a')
         resp = json.dumps(docker_ps_to_array(output))
 
-    #resp = ''
     return Response(response=resp, mimetype="application/json")
 
 @app.route('/images', methods=['GET'])
@@ -193,8 +193,8 @@ def docker(*args):
         cmd.append(sub)
     process = Popen(cmd, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
-    if stderr.startswith('Error'):
-        print 'Error: {0} -> {1}'.format(' '.join(cmd), stderr)
+    if stderr.startswith(b'Error'):
+        print('Error: {0} -> {1}'.format(' '.join(cmd), stderr))
     return stderr + stdout
 
 # 
@@ -208,10 +208,10 @@ def docker_ps_to_array(output):
     all = []
     for c in [line.split() for line in output.splitlines()[1:]]:
         each = {}
-        each['id'] = c[0]
-        each['image'] = c[1]
-        each['name'] = c[-1]
-        each['ports'] = c[-2]
+        each['id'] = c[0].decode('utf-8')
+        each['image'] = c[1].decode('utf-8')
+        each['name'] = c[-1].decode('utf-8')
+        each['ports'] = c[-2].decode('utf-8')
         all.append(each)
     return all
 
@@ -241,4 +241,4 @@ def docker_images_to_array(output):
     return all
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=8080, debug=True)
+    app.run(host="0.0.0.0",port=5000)

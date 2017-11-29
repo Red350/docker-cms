@@ -16,9 +16,13 @@ ADD /myapp /myapp
 RUN pip3 install --upgrade pip
 # Get pip to download and install requirements:
 RUN pip3 install -r /myapp/requirements.txt
+
+# Install curl and docker
+RUN apt-get install -y curl
+RUN curl -fsSL get.docker.com|sh
+
 # Expose ports
-EXPOSE 5000 8000
-#EXPOSE 8000
+EXPOSE 5000
 # Set the default directory where CMD will execute
 WORKDIR /myapp
 # Set the default command to execute
