@@ -84,8 +84,6 @@ def containers_log(id):
     resp = str(docker_logs_to_object(id, output))
     return Response(response=resp, mimetype="application/json")
 
-
-# todo
 @app.route('/images/<id>', methods=['DELETE'])
 def images_remove(id):
     """
