@@ -80,10 +80,12 @@ def containers_log(id):
     Dump specific container logs
 
     """
-    resp = ''
+    output = docker("logs", str(id))
+    resp = str(docker_logs_to_object(id, output))
     return Response(response=resp, mimetype="application/json")
 
 
+# todo
 @app.route('/images/<id>', methods=['DELETE'])
 def images_remove(id):
     """
@@ -93,6 +95,7 @@ def images_remove(id):
     resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
+# todo
 @app.route('/containers/<id>', methods=['DELETE'])
 def containers_remove(id):
     """
@@ -102,6 +105,7 @@ def containers_remove(id):
     resp = ''
     return Response(response=resp, mimetype="application/json")
 
+# todo
 @app.route('/containers', methods=['DELETE'])
 def containers_remove_all():
     """
@@ -111,6 +115,7 @@ def containers_remove_all():
     resp = ''
     return Response(response=resp, mimetype="application/json")
 
+# todo
 @app.route('/images', methods=['DELETE'])
 def images_remove_all():
     """
@@ -122,6 +127,7 @@ def images_remove_all():
     return Response(response=resp, mimetype="application/json")
 
 
+# todo
 @app.route('/containers', methods=['POST'])
 def containers_create():
     """
@@ -139,6 +145,7 @@ def containers_create():
     return Response(response='{"id": "%s"}' % id, mimetype="application/json")
 
 
+# todo
 @app.route('/images', methods=['POST'])
 def images_create():
     """
@@ -155,6 +162,7 @@ def images_create():
 
 
 
+# todo
 @app.route('/containers/<id>', methods=['PATCH'])
 def containers_update(id):
     """
@@ -175,6 +183,7 @@ def containers_update(id):
     resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
+# todo
 @app.route('/images/<id>', methods=['PATCH'])
 def images_update(id):
     """
