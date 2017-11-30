@@ -56,11 +56,10 @@ def containers_index():
 def images_index():
     """
     List all images 
-    
-    Complete the code below generating a valid response. 
     """
+    output = docker("images")
     
-    resp = ''
+    resp = json.dumps(docker_images_to_array(output))
     return Response(response=resp, mimetype="application/json")
 
 @app.route('/containers/<id>', methods=['GET'])
@@ -69,8 +68,9 @@ def containers_show(id):
     Inspect specific container
 
     """
+    output = docker("inspect", str(id))
 
-    resp = ''
+    resp = output
 
     return Response(response=resp, mimetype="application/json")
 
@@ -193,9 +193,11 @@ def docker(*args):
         cmd.append(sub)
     process = Popen(cmd, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
-    if stderr.startswith(b'Error'):
-        print('Error: {0} -> {1}'.format(' '.join(cmd), stderr))
-    return stderr + stdout
+    stdout_decoded = stdout.decode("utf-8")
+    stderr_decoded = stderr.decode("utf-8")
+    if stderr_decoded.startswith('Error'):
+        print('Error: {0} -> {1}'.format(' '.join(cmd), stderr_decoded))
+    return stderr_decoded + stdout_decoded
 
 # 
 # Docker output parsing helpers
@@ -208,10 +210,10 @@ def docker_ps_to_array(output):
     all = []
     for c in [line.split() for line in output.splitlines()[1:]]:
         each = {}
-        each['id'] = c[0].decode('utf-8')
-        each['image'] = c[1].decode('utf-8')
-        each['name'] = c[-1].decode('utf-8')
-        each['ports'] = c[-2].decode('utf-8')
+        each['id'] = c[0]
+        each['image'] = c[1]
+        each['name'] = c[-1]
+        each['ports'] = c[-2]
         all.append(each)
     return all
 
