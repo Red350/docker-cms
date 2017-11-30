@@ -93,14 +93,14 @@ def images_remove(id):
     resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
-# todo
 @app.route('/containers/<id>', methods=['DELETE'])
 def containers_remove(id):
     """
     Delete a specific container - must be already stopped/killed
 
     """
-    resp = ''
+    docker("rm", id)
+    resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
 # todo
