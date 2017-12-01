@@ -172,7 +172,6 @@ def containers_create():
     return Response(response='{"id": "%s"}' % id, mimetype="application/json")
 
 
-# todo
 @app.route('/images', methods=['POST'])
 def images_create():
     """
@@ -182,11 +181,21 @@ def images_create():
 
     """
     dockerfile = request.files['file']
+    dockerfile.save(secure_filename("Dockerfile"))
+
+    # Check if a tag was supplied
+    tag = request.args.get('tag')
+    if tag == None:
+        docker("build", ".")
+    else:
+        docker("build", "-t", str(tag), ".")
+
+    # Get the id of the newly created image, and return it
+    images = docker_images_to_array(docker("images"))
+    new_image_id = {"id": images[0]["id"]}
     
-    resp = ''
+    resp = json.dumps(new_image_id)
     return Response(response=resp, mimetype="application/json")
-
-
 
 
 # todo
@@ -279,4 +288,4 @@ def docker_images_to_array(output):
     return all
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5000)
+    app.run(host="0.0.0.0",port=8080)
