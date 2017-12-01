@@ -261,7 +261,7 @@ def nodes_index():
     """
     output = docker("node", "ls")
     
-    resp = ""
+    resp = json.dumps(docker_nodes_to_array(output))
     return Response(response=resp, mimetype="application/json")
 
 
@@ -333,6 +333,23 @@ def docker_services_to_array(output):
         each['replicas'] = c[3]
         each['image'] = c[4]
         each['ports'] = c[5]
+        all.append(each)
+    return all
+
+#
+# Parses the output of a Docker node command to a python List
+# 
+def docker_nodes_to_array(output):
+    all = []
+    for c in [line.split() for line in output.splitlines()[1:]]:
+        print(len(c), file=sys.stderr)
+        offset = 1 if len(c) == 6 else 0
+        each = {}
+        each['id'] = c[0]
+        each['hostname'] = c[1 + offset]
+        each['status'] = c[2 + offset]
+        each['availability'] = c[3 + offset]
+        each['leader'] = len(c) == 6
         all.append(each)
     return all
 
