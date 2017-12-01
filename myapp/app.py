@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE
 import os
 from tempfile import mkdtemp
 from werkzeug import secure_filename
+import sys
 
 app = Flask(__name__)
 app.debug = True
@@ -154,7 +155,6 @@ def images_remove_all():
     return Response(response=resp, mimetype="application/json")
 
 
-# todo
 @app.route('/containers', methods=['POST'])
 def containers_create():
     """
@@ -168,6 +168,12 @@ def containers_create():
     body = request.get_json(force=True)
     image = body['image']
     args = ('run', '-d')
+
+    # Add the port if it is provided
+    ports = body['publish']
+    if ports != None:
+        args = args + ('-p', ports)
+
     id = docker(*(args + (image,)))[0:12]
     return Response(response='{"id": "%s"}' % id, mimetype="application/json")
 

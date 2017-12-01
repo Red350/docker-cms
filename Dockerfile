@@ -22,7 +22,7 @@ RUN apt-get install -y curl
 RUN curl -fsSL get.docker.com|sh
 
 # Expose ports
-EXPOSE 5000
+EXPOSE 8080
 # Set the default directory where CMD will execute
 WORKDIR /myapp
 # Set the default command to execute
