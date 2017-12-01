@@ -8,6 +8,9 @@ from werkzeug import secure_filename
 app = Flask(__name__)
 app.debug = True
 
+# This is used to prevent the CMS from deleting itself
+cms_name = "dockercms"
+
 @app.route("/")
 def index():
     return """
@@ -103,14 +106,28 @@ def containers_remove(id):
     resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
-# todo
 @app.route('/containers', methods=['DELETE'])
 def containers_remove_all():
     """
     Force remove all containers - dangrous!
 
     """
-    resp = ''
+    containers_raw = docker('ps', '-a')
+    containers_array = docker_ps_to_array(containers_raw)
+
+    deleted_containers = []
+    for container in containers_array:
+        # Stops and deletes every container
+        # Checks if each container has the same name as this container, to prevent it from deleting itself!
+        if container["name"] != cms_name: 
+            id = container["id"]
+            docker("stop", id)
+            docker("rm", id)
+            deleted = {"id": id}
+            deleted_containers.append(deleted)
+
+    # Returns the ids of the deleted containers
+    resp = json.dumps(deleted_containers)
     return Response(response=resp, mimetype="application/json")
 
 # todo
