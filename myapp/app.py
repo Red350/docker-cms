@@ -204,7 +204,6 @@ def images_create():
     return Response(response=resp, mimetype="application/json")
 
 
-# todo
 @app.route('/containers/<id>', methods=['PATCH'])
 def containers_update(id):
     """
@@ -219,6 +218,8 @@ def containers_update(id):
         state = body['state']
         if state == 'running':
             docker('restart', id)
+        elif state == "stopped":
+            docker('stop', id)
     except:
         pass
 
