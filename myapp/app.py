@@ -130,15 +130,27 @@ def containers_remove_all():
     resp = json.dumps(deleted_containers)
     return Response(response=resp, mimetype="application/json")
 
-# todo
 @app.route('/images', methods=['DELETE'])
 def images_remove_all():
     """
     Force remove all images - dangrous!
 
     """
+    images_raw = docker("images")
+    images_array = docker_images_to_array(images_raw)
+    
+    deleted_images = []
+    for image in images_array:
+        # Force deletes every image
+        # Checks if each image belongs to this cms, to prevent it from deleting itself!
+        if image["name"] != cms_name:
+            id = image["id"]
+            docker("rmi", str(id), "-f")
+            deleted = {"id": id}
+            deleted_images.append(deleted)
  
-    resp = ''
+    # Returns the ids of the deleted images
+    resp = json.dumps(deleted_images)
     return Response(response=resp, mimetype="application/json")
 
 
