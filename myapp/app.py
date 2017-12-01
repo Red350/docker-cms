@@ -226,7 +226,6 @@ def containers_update(id):
     resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
-# todo
 @app.route('/images/<id>', methods=['PATCH'])
 def images_update(id):
     """
@@ -235,7 +234,11 @@ def images_update(id):
     curl -s -X PATCH -H 'Content-Type: application/json' http://localhost:8080/images/7f2619ed1768 -d '{"tag": "test:1.0"}'
 
     """
-    resp = ''
+    body = request.get_json(force=True)
+    tag = body['tag']
+    docker("tag", id, tag)
+
+    resp = '{"id": "%s"}' % id
     return Response(response=resp, mimetype="application/json")
 
 
