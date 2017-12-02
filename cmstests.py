@@ -1,37 +1,7 @@
-import unittest
 import json
 from subprocess import Popen, PIPE
 
 ip = "localhost"
-debug = True
-
-class CmsTests(unittest.TestCase):
-
-    test_command = "nope"
-    test_output = ""
-
-    def test_curl(self):
-        args = ("-s", "-X", "GET", "-H", "'Accept: application/json'", "http://localhost:80/containers")
-        self.__save_test_command(args)
-
-        output = json.loads(curl(*args))
-        self.__save_test_output(output)
-
-        self.assertEqual(1,1)
-
-    def tearDown(self):
-        if debug:
-            print("Command:")
-            print(self.test_command)
-            print("Response:")
-            print(self.test_output)
-            input("Press enter to continue")
-
-    def __save_test_command(self, args):
-        self.test_command = "curl" + " ".join(args)
-
-    def __save_test_output(self, output):
-        self.test_output = json.dumps(output, indent=4, sort_keys=True)
 
 def print_test_header(header):
     num_symbols = len(header) + 4
@@ -44,9 +14,6 @@ def print_command(args):
 
 def print_output(output):
     print(json.dumps(json.loads(output), indent=4, sort_keys=True))
-
-def wait():
-    input("Press enter to continue")
 
 def curl(*args):
     cmd = ['curl']
