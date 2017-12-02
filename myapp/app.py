@@ -34,6 +34,9 @@ DELETE /containers/<id>             Delete a specific container<br/>
 DELETE /containers                  Delete all containers (including running)<br/>
 DELETE /images/<id>                 Delete a specific image<br/>
 DELETE /images                      Delete all images<br/>
+<br/>
+GET /services                       List all services<br/>
+GET /nodes                          List all nodes in the swarm<br/>
 
 """
 
