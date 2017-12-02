@@ -1,7 +1,10 @@
 import json
 from subprocess import Popen, PIPE
 
-ip = "localhost"
+base_url = "http://localhost:80"
+get_request= "-X GET"
+accept_json = "-H 'Accept: application/json'"
+base_curl_command = ['curl', '-s', accept_json]
 
 def print_test_header(header):
     num_symbols = len(header) + 4
@@ -10,13 +13,14 @@ def print_test_header(header):
     print("#" * num_symbols)
 
 def print_command(args):
-    print("curl" + " ".join(args))
+    print("Executing command...")
+    print("curl -s" + " ".join(args))
 
 def print_output(output):
     print(json.dumps(json.loads(output), indent=4, sort_keys=True))
 
 def curl(*args):
-    cmd = ['curl']
+    cmd = base_curl_command
     for sub in args:
         cmd.append(sub)
     process = Popen(cmd, stdout=PIPE, stderr=PIPE)
@@ -28,21 +32,30 @@ def curl(*args):
     return stderr_decoded + stdout_decoded
 
 def list_containers():
+    args = (get_request, base_url + "/containers")
+    print_command(args)
     print("Listing containers...")
-    args = ("-s", "-X", "GET", "-H", "'Accept: application/json'", "http://{}:80/containers".format(ip))
+    print_output(curl(*args))
+
+def list_running_containers():
+    args = (get_request, base_url + "/containers?=running")
+    print_command(args)
+    print("Listing running images...")
     print_output(curl(*args))
 
 def list_images():
-    print("Listing images...")
     args = ("-s", "-X", "GET", "-H", "'Accept: application/json'", "http://{}:80/images".format(ip))
+    print_command(args)
+    print("Listing images...")
     print_output(curl(*args))
+
 
 # Image tests
 
 # Test 1: Add an image
 def test_add_image():
     list_containers()
-    list_images()
+#list_images()
 
 # Test 2: List all images
 
