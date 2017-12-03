@@ -15,14 +15,15 @@ cms_name = "dockercms"
 @app.route("/")
 def index():
     return """
-Available API endpoints:<br/>
-<br/>
+<html>
+<head><title>Docker CMS</title></head>
+<body>
+<h3>Available API endpoints:</h3>
 GET /containers                     List all containers<br/>
 GET /containers?state=running      List running containers (only)<br/>
 GET /containers/<id>                Inspect a specific container<br/>
 GET /containers/<id>/logs           Dump specific container logs<br/>
 GET /images                         List all images<br/>
-<br/>
 <br/>
 POST /images                        Create a new image<br/>
 POST /containers                    Create a new container<br/>
@@ -37,7 +38,8 @@ DELETE /images                      Delete all images<br/>
 <br/>
 GET /services                       List all services<br/>
 GET /nodes                          List all nodes in the swarm<br/>
-
+</body>
+</html>
 """
 
 @app.route('/containers', methods=['GET'])
