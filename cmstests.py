@@ -54,7 +54,7 @@ def list_containers():
 def list_running_containers():
     args = (get_request, base_url + "/containers?state=running")
     print_command(args)
-    print("Listing running images...")
+    print("Listing running containers...")
     return process_command(args)
 
 def list_images():
