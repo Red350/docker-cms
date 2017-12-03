@@ -10,6 +10,8 @@ accept_json = "-H 'Accept: application/json'"
 base_curl_command = ['curl', '-s', accept_json]
 
 image_tag = "sshd"
+cms_name = "dockercms"
+hardcoded = "f286434e530a"
 
 def print_test_header(header):
     num_symbols = len(header) + 4
@@ -29,7 +31,6 @@ def curl(*args):
     cmd = base_curl_command[:]
     for sub in args:
         cmd.append(sub)
-    print(cmd)
     process = Popen(cmd, stdout=PIPE, stderr=PIPE)
     stdout, stderr = process.communicate()
     stdout_decoded = stdout.decode("utf-8")
@@ -51,7 +52,7 @@ def list_containers():
     return process_command(args)
 
 def list_running_containers():
-    args = (get_request, base_url + "/containers?=running")
+    args = (get_request, base_url + "/containers?state=running")
     print_command(args)
     print("Listing running images...")
     return process_command(args)
@@ -62,26 +63,40 @@ def list_images():
     print("Listing images...")
     return process_command(args)
 
-def add_image(filepath):
+def create_image(filepath):
     args = (post_request, "-F", "file=@{}".format(filepath), base_url + "/images")
     print_command(args)
     print("Creating image for {}...".format(filepath))
     return process_command(args)
 
 def tag_image(id, tag):
-    tag_json = json.dumps({"tag": tag})
-    args = (patch_request, base_url + "/images/{}".format(id), "-d", tag_json)
+    body = json.dumps({"tag": tag})
+    args = (patch_request, base_url + "/images/{}".format(id), "-d", body)
     print_command(args)
     print("Updating tag for id: {} to {}...".format(id, tag))
+    return process_command(args)
+
+def create_container(id, ports):
+    body = json.dumps({"image": str(id), "publish": str(ports)})
+    args = (post_request, base_url + "/containers", "-d", body)
+    print_command(args)
+    print("Creating container for image: {}".format(id))
+    return process_command(args)
+
+def set_container_state(id, state):
+    body = json.dumps({"state": state})
+    args = (patch_request, base_url + "/containers/{}".format(id), "-d", body)
+    print_command(args)
+    print("Setting container {} to {}".format(id, state))
     return process_command(args)
 
 
 # Image tests
 
 # Test 1: Create an image
-def test_add_image():
+def test_create_image():
     print_test_header("Test 1: Create an image")
-    new_image = add_image("dockerfiles/sshd.Dockerfile")
+    new_image = create_image("dockerfiles/sshd.Dockerfile")
     return new_image["id"]
 
 # Test 2: Update image tag
@@ -94,46 +109,129 @@ def test_list_images():
     print_test_header("Test 3: List all images")
     list_images()
 
+
 # Container tests
 
-# Test 6: Create a container
+# Test 4: Create a container
+def test_create_container():
+    print_test_header("Test 4: Create a container")
+    new_container = create_container(image_tag, "5001:5002")
+    return new_container["id"]
 
-# Test 7: Inspect specific container
+# Test 5: Inspect specific container
+def test_inspect_container(id):
+    print_test_header("Test 5: Inspect container")
+    args = (get_request, base_url + "/containers/{}".format(id))
+    print_command(args)
+    print("Inspecting container {}...".format(id))
+    process_command(args)
 
-# Test 8: View logs for specific container
+# Test 6: View logs for specific container
+def test_view_logs(id):
+    print_test_header("Test 6: View logs for container")
+    args = (get_request, base_url + "/containers/{}/logs".format(id))
+    print_command(args)
+    print("Viewing logs for {}...".format(id))
+    process_command(args)
 
-# Test 9: List all containers
+# Test 7: List all containers
+def test_list_containers():
+    print_test_header("Test 7: List all containers")
+    list_containers()
 
-# Test 10: Stop container
+# Test 8: Stop container
+def test_stop_container(id):
+    print_test_header("Test 8: Stop a container")
+    set_container_state(id, "stopped")
+    
 
-# Test 11: List all running containers
+# Test 9: List all running containers
+def test_list_running_containers():
+    print_test_header("Test 9: List running containers")
+    list_running_containers()
 
-# Test 12: Restart container
-
-
+# Test 10: Restart container
+def test_restart_container(id):
+    print_test_header("Test 10: Restart a container")
+    set_container_state(id, "running")
+    list_running_containers()
 
 
 # Deletion tests
 
-# Test 13: Delete a container
+# Test 11: Delete a container
+def test_delete_container(id):
+    print_test_header("Test 11: Delete a container")
+    set_container_state(id, "stopped")
+    args = (delete_request, base_url + "/containers/{}".format(id))
+    print_command(args)
+    print("Deleting container {}...".format(id))
+    process_command(args)
+    list_containers()
 
-# Test 14: Force delete all containers
+# Test 12: Force delete all containers
+def test_delete_all_containers():
+    print_test_header("Test 12: Delete all containers")
+    args = (delete_request, base_url + "/containers")
+    print_command(args)
+    print("Deleting all containers...")
+    process_command(args)
+    list_containers()
 
-# Test 4: Delete an image
+# Test 13: Delete an image
+def test_delete_image(id):
+    print_test_header("Test 13: Delete an image")
+    args = (delete_request, base_url + "/images/{}".format(id))
+    print_command(args)
+    print("Deleting image {}...".format(id))
+    process_command(args)
+    list_images()
 
-# Test 5: Force delete all images
+# Test 14: Force delete all images
+def test_delete_all_images():
+    print_test_header("Test 14: Delete all images")
+    args = (delete_request, base_url + "/images")
+    print_command(args)
+    print("Deleting all images...")
+    process_command(args)
+    list_images()
 
 
 # Docker swarm tests
 
 # Test 15: List all services
+def test_list_services():
+    print_test_header("Test 15: List all services")
+    args = (get_request, base_url + "/services")
+    print_command(args)
+    print("Listing all services...")
+    process_command(args)
 
 # Test 16: List all nodes in the swarm
+def test_list_nodes():
+    print_test_header("Test 16: List all nodes")
+    args = (get_request, base_url + "/nodes")
+    print_command(args)
+    print("Listing all nodes...")
+    process_command(args)
 
 # Call all the tests
-#test_add_image()
+#image_id = test_create_image()
+#test_update_image(image_id)
 #test_list_images()
-#test_update_image()
+#test_create_container()
+#test_inspect_container(image_tag)
+#test_view_logs(cms_name)
+#test_list_containers()
+#test_stop_container(hardcoded)
+#test_list_running_containers()
+#test_restart_container(hardcoded)
 
-#list_containers()
-#list_images()
+#test_delete_container(hardcoded)
+#test_delete_all_containers()
+#test_delete_image(image_tag)
+test_delete_all_images()
+
+
+#test_list_services()
+#test_list_nodes()

@@ -88,7 +88,7 @@ def containers_log(id):
 
     """
     output = docker("logs", str(id))
-    resp = str(docker_logs_to_object(id, output))
+    resp = json.dumps(docker_logs_to_object(id, output))
     return Response(response=resp, mimetype="application/json")
 
 @app.route('/images/<id>', methods=['DELETE'])
@@ -173,9 +173,12 @@ def containers_create():
     args = ('run', '-d')
 
     # Add the port if it is provided
-    ports = body['publish']
-    if ports != None:
-        args = args + ('-p', ports)
+    try:
+        ports = body['publish']
+        if ports != None:
+            args = args + ('-p', ports)
+    except:
+        pass # no ports provided
 
     id = docker(*(args + (image,)))[0:12]
     return Response(response='{"id": "%s"}' % id, mimetype="application/json")
