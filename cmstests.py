@@ -11,7 +11,6 @@ base_curl_command = ['curl', '-s', accept_json]
 
 image_tag = "sshd"
 cms_name = "dockercms"
-hardcoded = "f286434e530a"
 
 def print_test_header(header):
     num_symbols = len(header) + 4
@@ -113,9 +112,9 @@ def test_list_images():
 # Container tests
 
 # Test 4: Create a container
-def test_create_container():
+def test_create_container(id):
     print_test_header("Test 4: Create a container")
-    new_container = create_container(image_tag, "5001:5002")
+    new_container = create_container(id, "5001:5002")
     return new_container["id"]
 
 # Test 5: Inspect specific container
@@ -215,23 +214,43 @@ def test_list_nodes():
     print("Listing all nodes...")
     process_command(args)
 
+def wait():
+    pass
+    #input("Press enter to continue")
+
 # Call all the tests
-#image_id = test_create_image()
-#test_update_image(image_id)
-#test_list_images()
-#test_create_container()
-#test_inspect_container(image_tag)
-#test_view_logs(cms_name)
-#test_list_containers()
-#test_stop_container(hardcoded)
-#test_list_running_containers()
-#test_restart_container(hardcoded)
+image_id = test_create_image()
+wait()
+test_update_image(image_id)
+wait()
+test_list_images()
+wait()
 
-#test_delete_container(hardcoded)
-#test_delete_all_containers()
-#test_delete_image(image_tag)
+container_id = test_create_container(image_tag)
+wait()
+test_inspect_container(container_id)
+wait()
+test_view_logs(cms_name)
+wait()
+test_list_containers()
+wait()
+test_stop_container(container_id)
+wait()
+test_list_running_containers()
+wait()
+test_restart_container(container_id)
+wait()
+
+test_delete_container(container_id)
+wait()
+test_delete_all_containers()
+wait()
+test_delete_image(image_tag)
+wait()
 test_delete_all_images()
+wait()
 
-
-#test_list_services()
-#test_list_nodes()
+test_list_services()
+wait()
+test_list_nodes()
+wait()
