@@ -1,7 +1,8 @@
 import json
+import sys
 from subprocess import Popen, PIPE
 
-base_url = "http://localhost:80"
+base_url = ""
 get_request = "-X GET"
 post_request = "-X POST"
 patch_request = "-X PATCH"
@@ -215,45 +216,58 @@ def test_list_nodes():
     process_command(args)
 
 def wait():
-    pass
+    # Uncomment this and remove pass to stop after each test
     #input("Press enter to continue")
+    pass
 
-# Call image tests
-image_id = test_create_image()
-wait()
-test_update_image(image_id)
-wait()
-test_list_images()
-wait()
+def run_all_tests():
+    # Call image tests
+    image_id = test_create_image()
+    wait()
+    test_update_image(image_id)
+    wait()
+    test_list_images()
+    wait()
 
-# Call container tests
-container_id = test_create_container(image_tag)
-wait()
-test_inspect_container(container_id)
-wait()
-test_view_logs(cms_name)
-wait()
-test_list_containers()
-wait()
-test_stop_container(container_id)
-wait()
-test_list_running_containers()
-wait()
-test_restart_container(container_id)
-wait()
+    # Call container tests
+    container_id = test_create_container(image_tag)
+    wait()
+    test_inspect_container(container_id)
+    wait()
+    test_view_logs(cms_name)
+    wait()
+    test_list_containers()
+    wait()
+    test_stop_container(container_id)
+    wait()
+    test_list_running_containers()
+    wait()
+    test_restart_container(container_id)
+    wait()
 
-# Call deletion tests
-test_delete_container(container_id)
-wait()
-test_delete_all_containers()
-wait()
-test_delete_image(image_tag)
-wait()
-test_delete_all_images()
-wait()
+    # Call deletion tests
+    test_delete_container(container_id)
+    wait()
+    test_delete_all_containers()
+    wait()
+    test_delete_image(image_tag)
+    wait()
+    test_delete_all_images()
+    wait()
 
-# Call swarm tests
-test_list_services()
-wait()
-test_list_nodes()
-wait()
+    # Call swarm tests
+    test_list_services()
+    wait()
+    test_list_nodes()
+    wait()
+
+if __name__ == "__main__":
+    if (len(sys.argv) != 3):
+        print("Usage: python3 cmstests.py <url> <port>")
+        sys.exit() 
+    base_url = "http://{}:{}".format(sys.argv[1], sys.argv[2])
+    print("Connecting to API at " + base_url + "...")
+    try:
+        run_all_tests()
+    except:
+        print("\nError: Failed to contact API.\nProvided url or port may be invalid, or API may be down.")
