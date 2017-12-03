@@ -20,7 +20,7 @@ Clone the repo to your home directory and cd into docker-cms directory.
 `docker build -t dockercms .`
 ##### Run Container
 ```
-docker run -d -v ~/dockercms/myapp:/myapp -p 80:8080 --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock --name dockercms dockercms
+docker run -d -v ~/docker-cms/myapp:/myapp -p 80:8080 --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock --name dockercms dockercms
 ```
 The `-v` argument allows changes to be made to the app.py script without having to rebuild the image.  
   
