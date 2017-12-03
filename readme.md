@@ -1,6 +1,6 @@
 # Docker Container Management System
-Name: Padraig Redmond  
-Student number: C15755659
+Padraig Redmond C15755659  
+CMS running on: 35.189.226.205:80
 
 This system allows controlling of docker containers and images through a RESTful API.  
   
