@@ -1,5 +1,5 @@
 # Docker Container Management System
-Name: Padraig Redmond
+Name: Padraig Redmond  
 Student number: C15755659
 
 This system allows controlling of docker containers and images through a RESTful API.  
@@ -26,7 +26,8 @@ The `--mount` argument allows the container to run commands on the vm itself, ra
 
 ## Endpoints
 After following the steps in setup, the API can be connected to using the following endpoints.  
-I've also provided example cURL commands for each endpoint.
+I've also provided example cURL commands for each endpoint.  
+
 | Method | Endpoint                  | Description                 | Example cURL call                                                                                                         |
 |--------|---------------------------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | GET    | /containers               | List all containers         | curl -s -H 'Accept: application/json' -X GET http://localhost:80/containers                                               |
@@ -46,12 +47,12 @@ I've also provided example cURL commands for each endpoint.
 | DELETE | /images                   | Force delete all images     | curl -s -H 'Accept: application/json' -X DELETE http://localhost:80/images                                                |
 
 ## Running the Tests
-Use the following format to run the tests:
-`python3 cmstests.py <url/ip> <port>`
-So to run the tests on the server while the CMS is on port 80:
-`python3 cmstests.py localhost 80`
+Use the following format to run the tests:  
+`python3 cmstests.py <url/ip> <port>`  
+So to run the tests on the server while the CMS is on port 80:  
+`python3 cmstests.py localhost 80`  
 There will be a small delay while the server is building the image for the first test, but after that they should run quite quickly.
 
 ## Running Nginx as a Service
-The following is a command to run Nginx as a service.
+The following is a command to run Nginx as a service.  
 `docker service create --detach=true --replicas 10 -p 80:80 --name web nginx`
