@@ -6,7 +6,7 @@ get_request = "-X GET"
 post_request = "-X POST"
 patch_request = "-X PATCH"
 delete_request = "-X DELETE"
-accept_json = "-H 'Accept: application/json'"
+accept_json = "-H 'Accept: application/json' "
 base_curl_command = ['curl', '-s', accept_json]
 
 image_tag = "sshd"
@@ -218,7 +218,7 @@ def wait():
     pass
     #input("Press enter to continue")
 
-# Call all the tests
+# Call image tests
 image_id = test_create_image()
 wait()
 test_update_image(image_id)
@@ -226,6 +226,7 @@ wait()
 test_list_images()
 wait()
 
+# Call container tests
 container_id = test_create_container(image_tag)
 wait()
 test_inspect_container(container_id)
@@ -241,6 +242,7 @@ wait()
 test_restart_container(container_id)
 wait()
 
+# Call deletion tests
 test_delete_container(container_id)
 wait()
 test_delete_all_containers()
@@ -250,6 +252,7 @@ wait()
 test_delete_all_images()
 wait()
 
+# Call swarm tests
 test_list_services()
 wait()
 test_list_nodes()
