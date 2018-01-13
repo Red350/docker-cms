@@ -11,9 +11,6 @@ Because of this, it was neccessary to explicity avoid deleting the dockercms con
 ## Repo Link
 https://github.com/Red350/docker-cms
 
-## Video Link
-https://youtu.be/wpR80bMJAJo
-
 ## Setup
 Clone the repo to your home directory and cd into docker-cms directory.
 ##### Build Image
